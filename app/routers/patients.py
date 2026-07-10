@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 from typing import List
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Query, Path   
 
 from .. import schemas
 
@@ -38,7 +38,7 @@ async def list_patients(limit: int = 20, offset: int = 0):
     response_model=schemas.Patient,
     responses={404: {"model": schemas.ErrorResponse, "description": "Patient not found"}},
 )
-async def get_patient(patient_id: int):
+async def get_patient(patient_id: int = Path(..., description="ID of the patient to retrieve")):
     """Get a single patient's profile by id."""
     for p in _patients:
         if p.id == patient_id:
@@ -51,7 +51,7 @@ async def get_patient(patient_id: int):
     response_model=schemas.Patient,
     responses={404: {"model": schemas.ErrorResponse, "description": "Patient not found"}},
 )
-async def update_patient(patient_id: int, patient: schemas.PatientCreate):
+async def update_patient(patient: schemas.PatientCreate, patient_id: int = Path(..., description="ID of the patient to update")):
     """Update a patient's profile."""
     for i, p in enumerate(_patients):
         if p.id == patient_id:
@@ -66,7 +66,7 @@ async def update_patient(patient_id: int, patient: schemas.PatientCreate):
     status_code=status.HTTP_204_NO_CONTENT,
     responses={404: {"model": schemas.ErrorResponse, "description": "Patient not found"}},
 )
-async def delete_patient(patient_id: int):
+async def delete_patient(patient_id: int = Path(..., description="ID of the patient to delete") ):
     """Delete a patient profile."""
     for i, p in enumerate(_patients):
         if p.id == patient_id:

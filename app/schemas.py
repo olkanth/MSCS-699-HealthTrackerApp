@@ -23,6 +23,22 @@ class Patient(PatientBase):
     created_at: datetime
 
 
+# ------------------------
+# Vital signs schemas
+# ------------------------
+class VitalSignsCreate(BaseModel):
+    patient_id: int
+    heart_rate: Optional[int] = Field(None, ge=20, le=300, description="Beats per minute")
+    blood_pressure: Optional[str] = Field(None, examples=["120/80"])
+    temperature: Optional[float] = Field(None, description="Degrees Fahrenheit")
 
+
+class VitalSigns(VitalSignsCreate):
+    id: int
+    recorded_at: datetime
+
+# ------------------------
+# Error response schema
+# ------------------------
 class ErrorResponse(BaseModel):
     detail: str = Field(..., examples=["Patient not found."])
