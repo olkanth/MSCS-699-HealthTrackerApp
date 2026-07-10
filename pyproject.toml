@@ -3,11 +3,8 @@ name = "MSCS-699-HealthTrackerApp"
 description = "MSCS-699 capstone project - HealthTrackerApp"
 requires-python = ">=3.9"
 dependencies = [
-    "fastapi>=0.110.0",
-    "uvicorn[standard]>=0.27.0",
-    "sqlalchemy>=2.0.0",
-    "psycopg2-binary>=2.9.0",
+    "fastapi[standard]>=0.139.0",
 ]
 
 [tool.fastapi]
-entrypoint = "main:app"
+entrypoint = "app.main:app"
