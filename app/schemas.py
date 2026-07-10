@@ -21,3 +21,8 @@ class PatientCreate(PatientBase):
 class Patient(PatientBase):
     id: int
     created_at: datetime
+
+
+
+class ErrorResponse(BaseModel):
+    detail: str = Field(..., examples=["Patient not found."])
