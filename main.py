@@ -5,3 +5,4 @@ app = FastAPI(title="HealthTracker App", swagger_ui_parameters={"syntaxHighlight
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
+
