@@ -1,0 +1,1901 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "HealthTrackerApp",
+        "description": "HealthTracker is a web apis for tracking your health metrics.",
+        "version": "0.1.0"
+    },
+    "paths": {
+        "/patients/": {
+            "post": {
+                "tags": [
+                    "Patients"
+                ],
+                "summary": "Create Patient",
+                "description": "Create a new patient profile.",
+                "operationId": "create_patient_patients__post",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatientCreate"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Patient"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "Patients"
+                ],
+                "summary": "List Patients",
+                "description": "List patients, with basic pagination.",
+                "operationId": "list_patients_patients__get",
+                "parameters": [
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 20,
+                            "title": "Limit"
+                        }
+                    },
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 0,
+                            "title": "Offset"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Patient"
+                                    },
+                                    "title": "Response List Patients Patients  Get"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/patients/{patient_id}": {
+            "get": {
+                "tags": [
+                    "Patients"
+                ],
+                "summary": "Get Patient",
+                "description": "Get a single patient's profile by id.",
+                "operationId": "get_patient_patients__patient_id__get",
+                "parameters": [
+                    {
+                        "name": "patient_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "description": "ID of the patient to retrieve",
+                            "title": "Patient Id"
+                        },
+                        "description": "ID of the patient to retrieve"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Patient"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Patient not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Patients"
+                ],
+                "summary": "Update Patient",
+                "description": "Update a patient's profile.",
+                "operationId": "update_patient_patients__patient_id__put",
+                "parameters": [
+                    {
+                        "name": "patient_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "description": "ID of the patient to update",
+                            "title": "Patient Id"
+                        },
+                        "description": "ID of the patient to update"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PatientCreate"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Patient"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Patient not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Patients"
+                ],
+                "summary": "Delete Patient",
+                "description": "Delete a patient profile.",
+                "operationId": "delete_patient_patients__patient_id__delete",
+                "parameters": [
+                    {
+                        "name": "patient_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "description": "ID of the patient to delete",
+                            "title": "Patient Id"
+                        },
+                        "description": "ID of the patient to delete"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Successful Response"
+                    },
+                    "404": {
+                        "description": "Patient not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/vital-signs/": {
+            "post": {
+                "tags": [
+                    "Vital Signs"
+                ],
+                "summary": "Create Vital Signs",
+                "description": "Record a new vital sign reading.",
+                "operationId": "create_vital_signs_vital_signs__post",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/VitalSignsCreate"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/VitalSigns"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "Vital Signs"
+                ],
+                "summary": "List Vital Signs",
+                "description": "List vital sign readings for a patient, most recent first.",
+                "operationId": "list_vital_signs_vital_signs__get",
+                "parameters": [
+                    {
+                        "name": "patient_id",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "description": "ID of the patient whose vital signs to retrieve",
+                            "title": "Patient Id"
+                        },
+                        "description": "ID of the patient whose vital signs to retrieve"
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "maximum": 500,
+                            "minimum": 1,
+                            "description": "Maximum number of records to return",
+                            "default": 50,
+                            "title": "Limit"
+                        },
+                        "description": "Maximum number of records to return"
+                    },
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "description": "Number of records to skip, for pagination",
+                            "default": 0,
+                            "title": "Offset"
+                        },
+                        "description": "Number of records to skip, for pagination"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/VitalSigns"
+                                    },
+                                    "title": "Response List Vital Signs Vital Signs  Get"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/vital-signs/{vital_signs_id}": {
+            "get": {
+                "tags": [
+                    "Vital Signs"
+                ],
+                "summary": "Get Vital Signs",
+                "description": "Get a single vital sign reading by id.",
+                "operationId": "get_vital_signs_vital_signs__vital_signs_id__get",
+                "parameters": [
+                    {
+                        "name": "vital_signs_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "description": "ID of the vital sign reading to retrieve",
+                            "title": "Vital Signs Id"
+                        },
+                        "description": "ID of the vital sign reading to retrieve"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/VitalSigns"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Reading not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/activity-data/": {
+            "post": {
+                "tags": [
+                    "Activity"
+                ],
+                "summary": "Create Activity Data",
+                "description": "Record new activity data (steps, active minutes) for a patient.",
+                "operationId": "create_activity_data_activity_data__post",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ActivityDataCreate"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ActivityData"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "Activity"
+                ],
+                "summary": "List Activity Data",
+                "description": "List activity data for a patient, most recent first.",
+                "operationId": "list_activity_data_activity_data__get",
+                "parameters": [
+                    {
+                        "name": "patient_id",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "title": "Patient Id"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 50,
+                            "title": "Limit"
+                        }
+                    },
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 0,
+                            "title": "Offset"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ActivityData"
+                                    },
+                                    "title": "Response List Activity Data Activity Data  Get"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/activity-data/{activity_id}": {
+            "get": {
+                "tags": [
+                    "Activity"
+                ],
+                "summary": "Get Activity Data",
+                "description": "Get a single activity data record by id.",
+                "operationId": "get_activity_data_activity_data__activity_id__get",
+                "parameters": [
+                    {
+                        "name": "activity_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "title": "Activity Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ActivityData"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Record not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/alert-thresholds/": {
+            "post": {
+                "tags": [
+                    "Alerts"
+                ],
+                "summary": "Create Alert Threshold",
+                "description": "Set a threshold for one metric (e.g. heart_rate) for a patient.",
+                "operationId": "create_alert_threshold_alert_thresholds__post",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AlertThresholdCreate"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AlertThreshold"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "Alerts"
+                ],
+                "summary": "List Alert Thresholds",
+                "description": "List all configured thresholds for a patient.",
+                "operationId": "list_alert_thresholds_alert_thresholds__get",
+                "parameters": [
+                    {
+                        "name": "patient_id",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "description": "ID of the patient whose alert thresholds to retrieve",
+                            "title": "Patient Id"
+                        },
+                        "description": "ID of the patient whose alert thresholds to retrieve"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/AlertThreshold"
+                                    },
+                                    "title": "Response List Alert Thresholds Alert Thresholds  Get"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/alert-thresholds/{threshold_id}": {
+            "put": {
+                "tags": [
+                    "Alerts"
+                ],
+                "summary": "Update Alert Threshold",
+                "description": "Update an existing threshold.",
+                "operationId": "update_alert_threshold_alert_thresholds__threshold_id__put",
+                "parameters": [
+                    {
+                        "name": "threshold_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "description": "ID of the alert threshold to update",
+                            "title": "Threshold Id"
+                        },
+                        "description": "ID of the alert threshold to update"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AlertThresholdCreate"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AlertThreshold"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Threshold not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Alerts"
+                ],
+                "summary": "Delete Alert Threshold",
+                "description": "Remove a threshold.",
+                "operationId": "delete_alert_threshold_alert_thresholds__threshold_id__delete",
+                "parameters": [
+                    {
+                        "name": "threshold_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "description": "ID of the alert threshold to delete",
+                            "title": "Threshold Id"
+                        },
+                        "description": "ID of the alert threshold to delete"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Successful Response"
+                    },
+                    "404": {
+                        "description": "Threshold not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/alerts/": {
+            "post": {
+                "tags": [
+                    "Alerts"
+                ],
+                "summary": "Create Alert",
+                "description": "Create an alert. In Phase 4 this is called by the rule engine when a\nreading crosses a threshold, rather than by a client directly.",
+                "operationId": "create_alert_alerts__post",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AlertCreate"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Alert"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "Alerts"
+                ],
+                "summary": "List Alerts",
+                "description": "List alerts, optionally filtered by patient and/or status.",
+                "operationId": "list_alerts_alerts__get",
+                "parameters": [
+                    {
+                        "name": "patient_id",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "anyOf": [
+                                {
+                                    "type": "integer"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "ID of the patient whose alerts to retrieve",
+                            "title": "Patient Id"
+                        },
+                        "description": "ID of the patient whose alerts to retrieve"
+                    },
+                    {
+                        "name": "status_filter",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "Filter alerts by status",
+                            "title": "Status Filter"
+                        },
+                        "description": "Filter alerts by status"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Alert"
+                                    },
+                                    "title": "Response List Alerts Alerts  Get"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/alerts/{alert_id}": {
+            "get": {
+                "tags": [
+                    "Alerts"
+                ],
+                "summary": "Get Alert",
+                "description": "Get a single alert by id.",
+                "operationId": "get_alert_alerts__alert_id__get",
+                "parameters": [
+                    {
+                        "name": "alert_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "description": "ID of the alert to retrieve",
+                            "title": "Alert Id"
+                        },
+                        "description": "ID of the alert to retrieve"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Alert"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Alert not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Alerts"
+                ],
+                "summary": "Update Alert",
+                "description": "Acknowledge or resolve an alert.",
+                "operationId": "update_alert_alerts__alert_id__patch",
+                "parameters": [
+                    {
+                        "name": "alert_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "description": "ID of the alert to update",
+                            "title": "Alert Id"
+                        },
+                        "description": "ID of the alert to update"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AlertUpdate"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Alert"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Alert not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/risk-scores/": {
+            "post": {
+                "tags": [
+                    "RiskScores"
+                ],
+                "summary": "Create Risk Score",
+                "description": "Store a newly calculated risk score. In Phase 5 this is called by the\nscoring model rather than by a client directly.",
+                "operationId": "create_risk_score_risk_scores__post",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RiskScoreCreate"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RiskScore"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "RiskScores"
+                ],
+                "summary": "List Risk Scores",
+                "description": "Get risk score(s) for a patient. By default returns just the most\nrecent score; pass history=true for the full trend.",
+                "operationId": "list_risk_scores_risk_scores__get",
+                "parameters": [
+                    {
+                        "name": "patient_id",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "description": "ID of the patient whose risk score to retrieve",
+                            "title": "Patient Id"
+                        },
+                        "description": "ID of the patient whose risk score to retrieve"
+                    },
+                    {
+                        "name": "history",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "description": "Whether to retrieve the full risk score history for the patient",
+                            "default": false,
+                            "title": "History"
+                        },
+                        "description": "Whether to retrieve the full risk score history for the patient"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/RiskScore"
+                                    },
+                                    "title": "Response List Risk Scores Risk Scores  Get"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/risk-scores/{risk_score_id}": {
+            "get": {
+                "tags": [
+                    "RiskScores"
+                ],
+                "summary": "Get Risk Score",
+                "description": "Get a single risk score record by id.",
+                "operationId": "get_risk_score_risk_scores__risk_score_id__get",
+                "parameters": [
+                    {
+                        "name": "risk_score_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "description": "ID of the risk score to retrieve",
+                            "title": "Risk Score Id"
+                        },
+                        "description": "ID of the risk score to retrieve"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RiskScore"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Risk score not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/": {
+            "get": {
+                "summary": "Root",
+                "operationId": "root__get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "ActivityData": {
+                "properties": {
+                    "patient_id": {
+                        "type": "integer",
+                        "title": "Patient Id"
+                    },
+                    "steps": {
+                        "anyOf": [
+                            {
+                                "type": "integer",
+                                "minimum": 0.0
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Steps"
+                    },
+                    "active_minutes": {
+                        "anyOf": [
+                            {
+                                "type": "integer",
+                                "minimum": 0.0
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Active Minutes"
+                    },
+                    "id": {
+                        "type": "integer",
+                        "title": "Id"
+                    },
+                    "recorded_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "title": "Recorded At"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "patient_id",
+                    "id",
+                    "recorded_at"
+                ],
+                "title": "ActivityData"
+            },
+            "ActivityDataCreate": {
+                "properties": {
+                    "patient_id": {
+                        "type": "integer",
+                        "title": "Patient Id"
+                    },
+                    "steps": {
+                        "anyOf": [
+                            {
+                                "type": "integer",
+                                "minimum": 0.0
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Steps"
+                    },
+                    "active_minutes": {
+                        "anyOf": [
+                            {
+                                "type": "integer",
+                                "minimum": 0.0
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Active Minutes"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "patient_id"
+                ],
+                "title": "ActivityDataCreate"
+            },
+            "Alert": {
+                "properties": {
+                    "patient_id": {
+                        "type": "integer",
+                        "title": "Patient Id"
+                    },
+                    "metric_name": {
+                        "type": "string",
+                        "title": "Metric Name"
+                    },
+                    "value": {
+                        "type": "number",
+                        "title": "Value"
+                    },
+                    "severity": {
+                        "type": "string",
+                        "title": "Severity",
+                        "examples": [
+                            "low",
+                            "medium",
+                            "high",
+                            "critical"
+                        ]
+                    },
+                    "id": {
+                        "type": "integer",
+                        "title": "Id"
+                    },
+                    "status": {
+                        "type": "string",
+                        "title": "Status",
+                        "default": "open"
+                    },
+                    "triggered_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "title": "Triggered At"
+                    },
+                    "acknowledged_by": {
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Acknowledged By"
+                    },
+                    "acknowledged_at": {
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "format": "date-time"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Acknowledged At"
+                    },
+                    "resolved_at": {
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "format": "date-time"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Resolved At"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "patient_id",
+                    "metric_name",
+                    "value",
+                    "severity",
+                    "id",
+                    "triggered_at"
+                ],
+                "title": "Alert"
+            },
+            "AlertCreate": {
+                "properties": {
+                    "patient_id": {
+                        "type": "integer",
+                        "title": "Patient Id"
+                    },
+                    "metric_name": {
+                        "type": "string",
+                        "title": "Metric Name"
+                    },
+                    "value": {
+                        "type": "number",
+                        "title": "Value"
+                    },
+                    "severity": {
+                        "type": "string",
+                        "title": "Severity",
+                        "examples": [
+                            "low",
+                            "medium",
+                            "high",
+                            "critical"
+                        ]
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "patient_id",
+                    "metric_name",
+                    "value",
+                    "severity"
+                ],
+                "title": "AlertCreate"
+            },
+            "AlertThreshold": {
+                "properties": {
+                    "patient_id": {
+                        "type": "integer",
+                        "title": "Patient Id"
+                    },
+                    "metric_name": {
+                        "type": "string",
+                        "title": "Metric Name",
+                        "examples": [
+                            "heart_rate",
+                            "systolic_bp",
+                            "spo2"
+                        ]
+                    },
+                    "min_value": {
+                        "anyOf": [
+                            {
+                                "type": "number"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Min Value"
+                    },
+                    "max_value": {
+                        "anyOf": [
+                            {
+                                "type": "number"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Max Value"
+                    },
+                    "id": {
+                        "type": "integer",
+                        "title": "Id"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "title": "Updated At"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "patient_id",
+                    "metric_name",
+                    "id",
+                    "updated_at"
+                ],
+                "title": "AlertThreshold"
+            },
+            "AlertThresholdCreate": {
+                "properties": {
+                    "patient_id": {
+                        "type": "integer",
+                        "title": "Patient Id"
+                    },
+                    "metric_name": {
+                        "type": "string",
+                        "title": "Metric Name",
+                        "examples": [
+                            "heart_rate",
+                            "systolic_bp",
+                            "spo2"
+                        ]
+                    },
+                    "min_value": {
+                        "anyOf": [
+                            {
+                                "type": "number"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Min Value"
+                    },
+                    "max_value": {
+                        "anyOf": [
+                            {
+                                "type": "number"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Max Value"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "patient_id",
+                    "metric_name"
+                ],
+                "title": "AlertThresholdCreate"
+            },
+            "AlertUpdate": {
+                "properties": {
+                    "status": {
+                        "type": "string",
+                        "title": "Status",
+                        "examples": [
+                            "acknowledged",
+                            "resolved"
+                        ]
+                    },
+                    "acknowledged_by": {
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Acknowledged By",
+                        "description": "User id of the staff member handling this alert"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "status"
+                ],
+                "title": "AlertUpdate"
+            },
+            "ErrorResponse": {
+                "properties": {
+                    "detail": {
+                        "type": "string",
+                        "title": "Detail",
+                        "examples": [
+                            "Patient not found."
+                        ]
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "detail"
+                ],
+                "title": "ErrorResponse"
+            },
+            "HTTPValidationError": {
+                "properties": {
+                    "detail": {
+                        "items": {
+                            "$ref": "#/components/schemas/ValidationError"
+                        },
+                        "type": "array",
+                        "title": "Detail"
+                    }
+                },
+                "type": "object",
+                "title": "HTTPValidationError"
+            },
+            "Patient": {
+                "properties": {
+                    "first_name": {
+                        "type": "string",
+                        "title": "First Name"
+                    },
+                    "last_name": {
+                        "type": "string",
+                        "title": "Last Name"
+                    },
+                    "date_of_birth": {
+                        "type": "string",
+                        "format": "date",
+                        "title": "Date Of Birth"
+                    },
+                    "mrn": {
+                        "type": "string",
+                        "title": "Mrn",
+                        "description": "Medical record number, e.g. MRN-00123"
+                    },
+                    "id": {
+                        "type": "integer",
+                        "title": "Id"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "title": "Created At"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "first_name",
+                    "last_name",
+                    "date_of_birth",
+                    "mrn",
+                    "id",
+                    "created_at"
+                ],
+                "title": "Patient"
+            },
+            "PatientCreate": {
+                "properties": {
+                    "first_name": {
+                        "type": "string",
+                        "title": "First Name"
+                    },
+                    "last_name": {
+                        "type": "string",
+                        "title": "Last Name"
+                    },
+                    "date_of_birth": {
+                        "type": "string",
+                        "format": "date",
+                        "title": "Date Of Birth"
+                    },
+                    "mrn": {
+                        "type": "string",
+                        "title": "Mrn",
+                        "description": "Medical record number, e.g. MRN-00123"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "first_name",
+                    "last_name",
+                    "date_of_birth",
+                    "mrn"
+                ],
+                "title": "PatientCreate"
+            },
+            "RiskScore": {
+                "properties": {
+                    "patient_id": {
+                        "type": "integer",
+                        "title": "Patient Id"
+                    },
+                    "score": {
+                        "type": "number",
+                        "maximum": 100.0,
+                        "minimum": 0.0,
+                        "title": "Score"
+                    },
+                    "risk_level": {
+                        "type": "string",
+                        "title": "Risk Level",
+                        "examples": [
+                            "low",
+                            "medium",
+                            "high"
+                        ]
+                    },
+                    "contributing_factors": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array",
+                        "title": "Contributing Factors",
+                        "examples": [
+                            [
+                                "elevated systolic BP trend",
+                                "low activity level"
+                            ]
+                        ]
+                    },
+                    "id": {
+                        "type": "integer",
+                        "title": "Id"
+                    },
+                    "calculated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "title": "Calculated At"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "patient_id",
+                    "score",
+                    "risk_level",
+                    "id",
+                    "calculated_at"
+                ],
+                "title": "RiskScore"
+            },
+            "RiskScoreCreate": {
+                "properties": {
+                    "patient_id": {
+                        "type": "integer",
+                        "title": "Patient Id"
+                    },
+                    "score": {
+                        "type": "number",
+                        "maximum": 100.0,
+                        "minimum": 0.0,
+                        "title": "Score"
+                    },
+                    "risk_level": {
+                        "type": "string",
+                        "title": "Risk Level",
+                        "examples": [
+                            "low",
+                            "medium",
+                            "high"
+                        ]
+                    },
+                    "contributing_factors": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array",
+                        "title": "Contributing Factors",
+                        "examples": [
+                            [
+                                "elevated systolic BP trend",
+                                "low activity level"
+                            ]
+                        ]
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "patient_id",
+                    "score",
+                    "risk_level"
+                ],
+                "title": "RiskScoreCreate"
+            },
+            "ValidationError": {
+                "properties": {
+                    "loc": {
+                        "items": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "integer"
+                                }
+                            ]
+                        },
+                        "type": "array",
+                        "title": "Location"
+                    },
+                    "msg": {
+                        "type": "string",
+                        "title": "Message"
+                    },
+                    "type": {
+                        "type": "string",
+                        "title": "Error Type"
+                    },
+                    "input": {
+                        "title": "Input"
+                    },
+                    "ctx": {
+                        "type": "object",
+                        "title": "Context"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "loc",
+                    "msg",
+                    "type"
+                ],
+                "title": "ValidationError"
+            },
+            "VitalSigns": {
+                "properties": {
+                    "patient_id": {
+                        "type": "integer",
+                        "title": "Patient Id"
+                    },
+                    "heart_rate": {
+                        "anyOf": [
+                            {
+                                "type": "integer",
+                                "maximum": 300.0,
+                                "minimum": 20.0
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Heart Rate",
+                        "description": "Beats per minute"
+                    },
+                    "blood_pressure": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Blood Pressure",
+                        "examples": [
+                            "120/80"
+                        ]
+                    },
+                    "temperature": {
+                        "anyOf": [
+                            {
+                                "type": "number"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Temperature",
+                        "description": "Degrees Fahrenheit"
+                    },
+                    "id": {
+                        "type": "integer",
+                        "title": "Id"
+                    },
+                    "recorded_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "title": "Recorded At"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "patient_id",
+                    "id",
+                    "recorded_at"
+                ],
+                "title": "VitalSigns"
+            },
+            "VitalSignsCreate": {
+                "properties": {
+                    "patient_id": {
+                        "type": "integer",
+                        "title": "Patient Id"
+                    },
+                    "heart_rate": {
+                        "anyOf": [
+                            {
+                                "type": "integer",
+                                "maximum": 300.0,
+                                "minimum": 20.0
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Heart Rate",
+                        "description": "Beats per minute"
+                    },
+                    "blood_pressure": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Blood Pressure",
+                        "examples": [
+                            "120/80"
+                        ]
+                    },
+                    "temperature": {
+                        "anyOf": [
+                            {
+                                "type": "number"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Temperature",
+                        "description": "Degrees Fahrenheit"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "patient_id"
+                ],
+                "title": "VitalSignsCreate"
+            }
+        }
+    }
+}
