@@ -1,14 +1,13 @@
+# -------------------------------------
+# Vital Signs routes
+# -------------------------------------
+
 from app.routers.patients import _patients
 from datetime import datetime, timezone
 from typing import List
 from fastapi import APIRouter, HTTPException, status, Query, Path   
-
 from .. import schemas
 
-
-# ------------------------
-# Vital signs router
-# ------------------------
 router = APIRouter(prefix="/vital-signs", tags=["Vital Signs"])
 
 # In-memory store, skeleton/demo only -- not persisted
@@ -16,6 +15,7 @@ router = APIRouter(prefix="/vital-signs", tags=["Vital Signs"])
 _vital_signs: List[schemas.VitalSigns] = []
 _next_id = 1
 
+# Route to create vital sign reading
 @router.post(
     "/",
     response_model=schemas.VitalSigns,

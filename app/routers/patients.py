@@ -1,7 +1,9 @@
+# --------------------------------------
+# Patient routes
+# --------------------------------------    
 from datetime import datetime, timezone
 from typing import List
 from fastapi import APIRouter, HTTPException, status, Query, Path   
-
 from .. import schemas
 
 
@@ -12,6 +14,7 @@ router = APIRouter(prefix="/patients", tags=["Patients"])
 _patients: List[schemas.Patient] = []
 _next_id = 1
 
+# Route to create new patient
 @router.post(
     "/",
     response_model=schemas.Patient,
@@ -27,12 +30,14 @@ async def create_patient(patient: schemas.PatientCreate):
     return new_patient
 
 
+# Route to get list of patients
 @router.get("/", response_model=List[schemas.Patient])
 async def list_patients(limit: int = 20, offset: int = 0):
     """List patients, with basic pagination."""
     return _patients[offset: offset + limit]
 
 
+# Route to get patient by id
 @router.get(
     "/{patient_id}",
     response_model=schemas.Patient,
@@ -46,6 +51,7 @@ async def get_patient(patient_id: int = Path(..., description="ID of the patient
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Patient not found.")
 
 
+# Route to update patient
 @router.put(
     "/{patient_id}",
     response_model=schemas.Patient,
@@ -61,6 +67,7 @@ async def update_patient(patient: schemas.PatientCreate, patient_id: int = Path(
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Patient not found.")
 
 
+# Route to delete patient
 @router.delete(
     "/{patient_id}",
     status_code=status.HTTP_204_NO_CONTENT,
