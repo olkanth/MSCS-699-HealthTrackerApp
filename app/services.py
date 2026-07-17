@@ -1,7 +1,7 @@
 # --------------------------------------
-# Data access layer -- the only place that talks to the database directly.
+# Service layer -- the only place that talks to the database through ORM.
 #
-# Endpoints/Routers call these functions  to query the databases instead of building queries themselves, 
+# Endpoints/Routers call these functions  to query the databases instead of building queries themselves,
 # and get back either an app/models.py ORM row (or list of rows).
 # --------------------------------------
 
@@ -38,6 +38,7 @@ def _utcnow() -> datetime:
 # Users
 # ---------------------------------------------------------------------
 def create_user(db: Session, *, username: str, email: str, password_hash: str, role: str) -> models.User:
+    # Insert a new login account; raises DuplicateError if the username or email is already taken.
     user = models.User(username=username, email=email, password_hash=password_hash, role=role)
     db.add(user)
     try:
@@ -52,10 +53,12 @@ def create_user(db: Session, *, username: str, email: str, password_hash: str, r
 
 
 def get_user_by_username(db: Session, username: str) -> Optional[models.User]:
+    # Look up a user by username; used by the login endpoint.
     return db.query(models.User).filter(models.User.username == username).first()
 
 
 def get_user(db: Session, user_id: int) -> Optional[models.User]:
+    # Look up a user by id; used by get_current_user to resolve a bearer token.
     return db.query(models.User).filter(models.User.id == user_id).first()
 
 
@@ -63,6 +66,8 @@ def get_user(db: Session, user_id: int) -> Optional[models.User]:
 # Patients
 # ---------------------------------------------------------------------
 def create_patient(db: Session, patient_in: schemas.PatientCreate, user_id: int) -> models.Patient:
+    # Create a patient profile linked to the given login account; raises
+    # DuplicateError on a repeated MRN or a user_id already linked to a patient.
     patient = models.Patient(
         user_id=user_id,
         first_name=patient_in.first_name,
@@ -85,18 +90,22 @@ def create_patient(db: Session, patient_in: schemas.PatientCreate, user_id: int)
 
 
 def get_patient(db: Session, patient_id: int) -> Optional[models.Patient]:
+    # Look up a single patient by id; returns None if it doesn't exist.
     return db.query(models.Patient).filter(models.Patient.id == patient_id).first()
 
 
 def get_patient_by_user_id(db: Session, user_id: int) -> Optional[models.Patient]:
+    # Look up the patient profile linked to a given login account; used for the RBAC ownership check.
     return db.query(models.Patient).filter(models.Patient.user_id == user_id).first()
 
 
 def list_patients(db: Session, limit: int = 20, offset: int = 0) -> list[models.Patient]:
+    # List patients ordered by id, paginated.
     return db.query(models.Patient).order_by(models.Patient.id).offset(offset).limit(limit).all()
 
 
 def update_patient(db: Session, patient_id: int, patient_in: schemas.PatientCreate) -> models.Patient:
+    # Overwrite an existing patient's profile fields; raises NotFoundError/DuplicateError as appropriate.
     patient = get_patient(db, patient_id)
     if patient is None:
         raise NotFoundError(f"Patient {patient_id} not found.")
@@ -115,6 +124,7 @@ def update_patient(db: Session, patient_id: int, patient_in: schemas.PatientCrea
 
 
 def delete_patient(db: Session, patient_id: int) -> None:
+    # Delete a patient (cascades to their vital signs/activity data/etc.); raises NotFoundError if missing.
     patient = get_patient(db, patient_id)
     if patient is None:
         raise NotFoundError(f"Patient {patient_id} not found.")
@@ -140,12 +150,14 @@ def _parse_blood_pressure(blood_pressure: Optional[str]) -> tuple[Optional[int],
 
 
 def _format_blood_pressure(systolic: Optional[int], diastolic: Optional[int]) -> Optional[str]:
+    # (120, 80) -> "120/80"; either missing -> None. Reverse of _parse_blood_pressure.
     if systolic is None or diastolic is None:
         return None
     return f"{systolic}/{diastolic}"
 
-
 def _vital_signs_to_schema(row: models.VitalSigns) -> schemas.VitalSigns:
+    # Build the API response schema from an ORM row by hand, since systolic_bp/
+    # diastolic_bp (two DB columns) need combining into one blood_pressure string.
     return schemas.VitalSigns(
         id=row.id,
         patient_id=row.patient_id,
@@ -157,6 +169,7 @@ def _vital_signs_to_schema(row: models.VitalSigns) -> schemas.VitalSigns:
 
 
 def create_vital_signs(db: Session, vitals_in: schemas.VitalSignsCreate) -> schemas.VitalSigns:
+    # Record a new vital signs reading for a patient; raises NotFoundError if the patient doesn't exist.
     systolic, diastolic = _parse_blood_pressure(vitals_in.blood_pressure)
     row = models.VitalSigns(
         patient_id=vitals_in.patient_id,
@@ -179,6 +192,7 @@ def create_vital_signs(db: Session, vitals_in: schemas.VitalSignsCreate) -> sche
 
 
 def get_vital_signs(db: Session, vital_signs_id: int) -> Optional[schemas.VitalSigns]:
+    # Look up a single vital signs reading by id; returns None if it doesn't exist.
     row = db.query(models.VitalSigns).filter(models.VitalSigns.id == vital_signs_id).first()
     return _vital_signs_to_schema(row) if row else None
 
@@ -191,6 +205,7 @@ def list_vital_signs(
     limit: int = 50,
     offset: int = 0,
 ) -> list[schemas.VitalSigns]:
+    # List a patient's vital signs, most recent first, optionally filtered to a start/end date range.
     query = db.query(models.VitalSigns).filter(models.VitalSigns.patient_id == patient_id)
     if start is not None:
         query = query.filter(models.VitalSigns.recorded_at >= start)
@@ -204,6 +219,7 @@ def list_vital_signs(
 # Activity data
 # ---------------------------------------------------------------------
 def create_activity_data(db: Session, activity_in: schemas.ActivityDataCreate) -> models.ActivityData:
+    # Record a new activity data entry for a patient; raises NotFoundError if the patient doesn't exist.
     row = models.ActivityData(
         patient_id=activity_in.patient_id,
         steps=activity_in.steps,
@@ -223,6 +239,7 @@ def create_activity_data(db: Session, activity_in: schemas.ActivityDataCreate) -
 
 
 def get_activity_data(db: Session, activity_id: int) -> Optional[models.ActivityData]:
+    # Look up a single activity data record by id; returns None if it doesn't exist.
     return db.query(models.ActivityData).filter(models.ActivityData.id == activity_id).first()
 
 
@@ -234,6 +251,7 @@ def list_activity_data(
     limit: int = 50,
     offset: int = 0,
 ) -> list[models.ActivityData]:
+    # List a patient's activity data, most recent first, optionally filtered to a start/end date range.
     query = db.query(models.ActivityData).filter(models.ActivityData.patient_id == patient_id)
     if start is not None:
         query = query.filter(models.ActivityData.recorded_at >= start)
