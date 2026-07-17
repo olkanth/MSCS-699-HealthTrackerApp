@@ -1,6 +1,40 @@
+# --------------------------------------
+# Pydantic schemas -- the API layer.
+#
+# These classes are request/response DTOs: FastAPI uses them to bing the incoming payload and reponses.
+# Request DTOs will be used validate the JSON payload and mapped to respective Entity models 
+# --------------------------------------
+
 from datetime import date, datetime
-from typing import List, Optional
+from typing import List, Literal, Optional
 from pydantic import BaseModel, Field
+
+
+# ------------------------
+# Users / auth schemas
+# ------------------------
+class UserCreate(BaseModel):
+    username: str = Field(..., examples=["jsmith"])
+    email: str = Field(..., examples=["j.smith@example.com"])
+    password: str = Field(..., min_length=8, description="Plain-text password; hashed before storage")
+    role: Literal["patient", "provider", "admin", "it_staff"] = Field(
+        ..., description="Account role; determines what this login can access"
+    )
+
+
+class UserOut(BaseModel):
+    model_config = {"from_attributes": True}
+
+    id: int
+    username: str
+    email: str
+    role: str
+    created_at: datetime
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
 
 
 # ------------------------
@@ -15,10 +49,20 @@ class PatientBase(BaseModel):
 
 
 class PatientCreate(PatientBase):
-    pass
+    user_id: Optional[int] = Field(
+        None,
+        description=(
+            "Login account (users.id) this patient profile is linked to. "
+            "Defaults to the caller's own account; only provider/admin callers "
+            "may set this to link a different account."
+        ),
+    )
 
 
 class Patient(PatientBase):
+    # This be built straight from a models.Patient row
+    model_config = {"from_attributes": True}  
+
     id: int
     created_at: datetime
 
@@ -48,6 +92,8 @@ class ActivityDataCreate(BaseModel):
 
 
 class ActivityData(ActivityDataCreate):
+    model_config = {"from_attributes": True} 
+
     id: int
     recorded_at: datetime
 
