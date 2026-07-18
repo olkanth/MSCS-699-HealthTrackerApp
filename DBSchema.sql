@@ -141,3 +141,70 @@ CREATE TABLE IF NOT EXISTS audit_log (
     CONSTRAINT chk_audit_action CHECK (action IN ('create', 'read', 'update', 'delete'))
 );
 CREATE INDEX IF NOT EXISTS idx_audit_table_record ON audit_log (table_name, record_id);
+
+
+-- =====================================================================
+-- SAMPLE DATA
+-- Guarded so this whole block only runs once: if the seed provider
+-- 'dr.patel' already exists, we assume the rest of the sample data was
+-- already inserted on a previous run and skip it, rather than creating
+-- duplicate rows every time this script is re-run.
+-- =====================================================================
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM users WHERE username = 'dr.patel') THEN
+
+        -- password for every seeded user below is "welcome@123" (bcrypt hash, matches app.auth.hash_password)
+        INSERT INTO users (username, email, password_hash, role) VALUES
+            ('dr.patel',   'r.patel@healthtrack.example',    '$2b$12$j4aDMK209ZhOwcagyzHxQ.mVZhahIkgvgHRW7OTib38bBmKojHLzC', 'provider'),
+            ('dr.nguyen',  'l.nguyen@healthtrack.example',   '$2b$12$j4aDMK209ZhOwcagyzHxQ.mVZhahIkgvgHRW7OTib38bBmKojHLzC', 'provider'),
+            ('jsmith',     'j.smith@example.com',            '$2b$12$j4aDMK209ZhOwcagyzHxQ.mVZhahIkgvgHRW7OTib38bBmKojHLzC', 'patient'),
+            ('mgarcia',    'm.garcia@example.com',           '$2b$12$j4aDMK209ZhOwcagyzHxQ.mVZhahIkgvgHRW7OTib38bBmKojHLzC', 'patient'),
+            ('admin1',     'admin@healthtrack.example',      '$2b$12$j4aDMK209ZhOwcagyzHxQ.mVZhahIkgvgHRW7OTib38bBmKojHLzC', 'admin'),
+            ('it.support', 'it@healthtrack.example',         '$2b$12$j4aDMK209ZhOwcagyzHxQ.mVZhahIkgvgHRW7OTib38bBmKojHLzC', 'it_staff');
+
+        INSERT INTO providers (user_id, first_name, last_name, specialty, npi_number)
+        SELECT id, 'Reena', 'Patel', 'Cardiology', '1000000001' FROM users WHERE username = 'dr.patel'
+        UNION ALL
+        SELECT id, 'Long', 'Nguyen', 'Endocrinology', '1000000002' FROM users WHERE username = 'dr.nguyen';
+
+        INSERT INTO patients (user_id, first_name, last_name, date_of_birth, gender, mrn, primary_provider_id)
+        SELECT u.id, 'John', 'Smith', DATE '1958-04-12', 'male', 'MRN-00123', p.id
+        FROM users u, providers p WHERE u.username = 'jsmith' AND p.npi_number = '1000000001'
+        UNION ALL
+        SELECT u.id, 'Maria', 'Garcia', DATE '1972-11-03', 'female', 'MRN-00124', p.id
+        FROM users u, providers p WHERE u.username = 'mgarcia' AND p.npi_number = '1000000002';
+
+        INSERT INTO vital_signs (patient_id, heart_rate, systolic_bp, diastolic_bp, spo2, temperature, recorded_at, source)
+        SELECT id, 78, 138, 88, 96, 98.4, NOW() - INTERVAL '2 hours', 'device' FROM patients WHERE mrn = 'MRN-00123'
+        UNION ALL
+        SELECT id, 82, 142, 90, 95, 98.6, NOW() - INTERVAL '1 day',   'device' FROM patients WHERE mrn = 'MRN-00123'
+        UNION ALL
+        SELECT id, 74, 118, 76, 98, 98.1, NOW() - INTERVAL '3 hours', 'device' FROM patients WHERE mrn = 'MRN-00124';
+
+        INSERT INTO activity_data (patient_id, steps, active_minutes, distance_km, recorded_at, source)
+        SELECT id, 3200, 22, 2.1, NOW() - INTERVAL '1 day', 'device' FROM patients WHERE mrn = 'MRN-00123'
+        UNION ALL
+        SELECT id, 6100, 41, 4.3, NOW() - INTERVAL '1 day', 'device' FROM patients WHERE mrn = 'MRN-00124';
+
+        INSERT INTO alert_thresholds (patient_id, metric_name, min_value, max_value)
+        SELECT id, 'systolic_bp', 90, 140 FROM patients WHERE mrn = 'MRN-00123'
+        UNION ALL
+        SELECT id, 'heart_rate',  50, 100 FROM patients WHERE mrn = 'MRN-00123'
+        UNION ALL
+        SELECT id, 'heart_rate',  50, 110 FROM patients WHERE mrn = 'MRN-00124';
+
+        INSERT INTO alerts (patient_id, metric_name, value, severity, status, triggered_at)
+        SELECT id, 'systolic_bp', 142, 'medium', 'open', NOW() - INTERVAL '1 day' FROM patients WHERE mrn = 'MRN-00123';
+
+        INSERT INTO risk_scores (patient_id, score, risk_level, contributing_factors, calculated_at)
+        SELECT id, 62.5, 'medium', '["elevated systolic BP trend", "low activity level"]', NOW() - INTERVAL '1 day'
+        FROM patients WHERE mrn = 'MRN-00123';
+
+        INSERT INTO audit_log (user_id, action, table_name, record_id)
+        SELECT u.id, 'read', 'patients', p.id FROM users u, patients p WHERE u.username = 'dr.patel' AND p.mrn = 'MRN-00123'
+        UNION ALL
+        SELECT u.id, 'update', 'alert_thresholds', 1 FROM users u WHERE u.username = 'dr.patel';
+
+    END IF;
+END $$;
